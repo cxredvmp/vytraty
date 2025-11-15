@@ -8,15 +8,6 @@ use uuid::Uuid;
 
 use crate::{error::AppError, models::record::*};
 
-pub async fn get_record(db: &DatabaseConnection, id: Uuid) -> Result<Record, AppError> {
-    let record = record::Entity::find_by_id(id)
-        .one(db)
-        .await?
-        .ok_or(AppError::NotFound)?
-        .into();
-    Ok(record)
-}
-
 pub async fn create_record(
     db: &DatabaseConnection,
     record: RecordCreate,
@@ -56,12 +47,13 @@ pub async fn create_record(
     Ok(record)
 }
 
-pub async fn delete_record(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
-    let res = record::Entity::delete_by_id(id).exec(db).await?;
-    match res.rows_affected {
-        0 => Err(AppError::NotFound),
-        _ => Ok(()),
-    }
+pub async fn get_record(db: &DatabaseConnection, id: Uuid) -> Result<Record, AppError> {
+    let record = record::Entity::find_by_id(id)
+        .one(db)
+        .await?
+        .ok_or(AppError::NotFound)?
+        .into();
+    Ok(record)
 }
 
 pub async fn filter_records(
@@ -77,4 +69,12 @@ pub async fn filter_records(
     }
     let records = query.all(db).await?.into_iter().map(Into::into).collect();
     Ok(records)
+}
+
+pub async fn delete_record(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
+    let res = record::Entity::delete_by_id(id).exec(db).await?;
+    match res.rows_affected {
+        0 => Err(AppError::NotFound),
+        _ => Ok(()),
+    }
 }

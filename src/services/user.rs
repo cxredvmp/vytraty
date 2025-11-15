@@ -4,15 +4,6 @@ use uuid::Uuid;
 
 use crate::{error::AppError, models::user::*};
 
-pub async fn get_user(db: &DatabaseConnection, id: Uuid) -> Result<User, AppError> {
-    let user = user::Entity::find_by_id(id)
-        .one(db)
-        .await?
-        .ok_or(AppError::NotFound)?
-        .into();
-    Ok(user)
-}
-
 pub async fn create_user(db: &DatabaseConnection, user: UserCreate) -> Result<User, AppError> {
     let user = user::ActiveModel {
         id: Set(Uuid::new_v4()),
@@ -43,12 +34,13 @@ pub async fn create_user(db: &DatabaseConnection, user: UserCreate) -> Result<Us
     Ok(user)
 }
 
-pub async fn delete_user(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
-    let res = user::Entity::delete_by_id(id).exec(db).await?;
-    match res.rows_affected {
-        0 => Err(AppError::NotFound),
-        _ => Ok(()),
-    }
+pub async fn get_user(db: &DatabaseConnection, id: Uuid) -> Result<User, AppError> {
+    let user = user::Entity::find_by_id(id)
+        .one(db)
+        .await?
+        .ok_or(AppError::NotFound)?
+        .into();
+    Ok(user)
 }
 
 pub async fn get_users(db: &DatabaseConnection) -> Result<Vec<User>, AppError> {
@@ -70,4 +62,12 @@ pub async fn get_default_currency_code(
         .await?
         .ok_or_else(|| AppError::unprocessable_entity([("user_id", "user doesn't exist")]))?;
     Ok(user.default_currency_code)
+}
+
+pub async fn delete_user(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
+    let res = user::Entity::delete_by_id(id).exec(db).await?;
+    match res.rows_affected {
+        0 => Err(AppError::NotFound),
+        _ => Ok(()),
+    }
 }

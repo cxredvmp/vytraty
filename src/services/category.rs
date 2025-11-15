@@ -4,15 +4,6 @@ use uuid::Uuid;
 
 use crate::{error::AppError, models::category::*};
 
-pub async fn get_category(db: &DatabaseConnection, id: Uuid) -> Result<Category, AppError> {
-    let category = category::Entity::find_by_id(id)
-        .one(db)
-        .await?
-        .ok_or(AppError::NotFound)?
-        .into();
-    Ok(category)
-}
-
 pub async fn create_category(
     db: &DatabaseConnection,
     category: CategoryCreate,
@@ -38,12 +29,13 @@ pub async fn create_category(
     Ok(category)
 }
 
-pub async fn delete_category(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
-    let res = category::Entity::delete_by_id(id).exec(db).await?;
-    match res.rows_affected {
-        0 => Err(AppError::NotFound),
-        _ => Ok(()),
-    }
+pub async fn get_category(db: &DatabaseConnection, id: Uuid) -> Result<Category, AppError> {
+    let category = category::Entity::find_by_id(id)
+        .one(db)
+        .await?
+        .ok_or(AppError::NotFound)?
+        .into();
+    Ok(category)
 }
 
 pub async fn get_categories(db: &DatabaseConnection) -> Result<Vec<Category>, AppError> {
@@ -54,4 +46,12 @@ pub async fn get_categories(db: &DatabaseConnection) -> Result<Vec<Category>, Ap
         .map(Into::into)
         .collect();
     Ok(categories)
+}
+
+pub async fn delete_category(db: &DatabaseConnection, id: Uuid) -> Result<(), AppError> {
+    let res = category::Entity::delete_by_id(id).exec(db).await?;
+    match res.rows_affected {
+        0 => Err(AppError::NotFound),
+        _ => Ok(()),
+    }
 }
