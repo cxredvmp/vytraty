@@ -4,6 +4,9 @@ use axum::extract::FromRef;
 use migration::{Migrator, MigratorTrait};
 use sea_orm::Database;
 
+use crate::config::Config;
+
+mod config;
 mod error;
 mod models;
 mod repositories;
@@ -21,9 +24,9 @@ struct AppState {
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
+    let config = Config::from_env();
 
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let db = Database::connect(&db_url)
+    let db = Database::connect(config.db_url())
         .await
         .expect("failed to connect to database");
     eprintln!("database connection established");
