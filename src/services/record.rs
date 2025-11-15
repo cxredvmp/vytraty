@@ -6,7 +6,7 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
-use crate::{error::AppError, models::record::*};
+use crate::{error::AppError, models::record::*, repositories};
 
 pub async fn create_record(
     db: &DatabaseConnection,
@@ -14,7 +14,7 @@ pub async fn create_record(
 ) -> Result<Record, AppError> {
     let currency_code = match record.currency_code {
         Some(cc) => cc,
-        None => super::user::get_default_currency_code(db, record.user_id).await?,
+        None => repositories::user::get_default_currency_code(db, record.user_id).await?,
     };
     let record = record::ActiveModel {
         id: Set(Uuid::new_v4()),

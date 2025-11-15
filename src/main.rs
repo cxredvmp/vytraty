@@ -5,6 +5,7 @@ use sea_orm::{Database, DatabaseConnection};
 
 mod error;
 mod models;
+mod repositories;
 mod routes;
 mod services;
 
