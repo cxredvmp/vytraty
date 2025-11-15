@@ -6,7 +6,7 @@ use axum::{
 };
 use uuid::Uuid;
 
-use crate::{AppState, error::AppError, models::record::*, services};
+use crate::{AppState, error::AppError, models::record::*, services::record::Service};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -15,35 +15,35 @@ pub fn router() -> Router<AppState> {
 }
 
 async fn create_record(
-    State(AppState { db }): State<AppState>,
+    State(service): State<Service>,
     Json(RecordBody { record }): Json<RecordBody<RecordCreate>>,
 ) -> Result<(StatusCode, Json<RecordBody<Record>>), AppError> {
     record.validate()?;
-    let record = services::record::create_record(&db, record).await?;
+    let record = service.create_record(record).await?;
     Ok((StatusCode::CREATED, Json(RecordBody { record })))
 }
 
 async fn get_record(
-    State(AppState { db }): State<AppState>,
+    State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<RecordBody<Record>>, AppError> {
-    let record = services::record::get_record(&db, id).await?;
+    let record = service.get_record(id).await?;
     Ok(Json(RecordBody { record }))
 }
 
 async fn filter_records(
-    State(AppState { db }): State<AppState>,
+    State(service): State<Service>,
     Query(params): Query<RecordFilterParams>,
 ) -> Result<Json<RecordsBody<Record>>, AppError> {
     params.validate()?;
-    let records = services::record::filter_records(&db, params).await?;
+    let records = service.filter_records(params).await?;
     Ok(Json(RecordsBody { records }))
 }
 
 async fn delete_record(
-    State(AppState { db }): State<AppState>,
+    State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
-    services::record::delete_record(&db, id).await?;
+    service.delete_record(id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
