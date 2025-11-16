@@ -20,7 +20,7 @@ impl Service {
         Self { repo, user_repo }
     }
 
-    pub async fn create_record(self, record: RecordCreate) -> Result<Record, AppError> {
+    pub async fn create_record(self, record: RecordCreate) -> Result<RecordRead, AppError> {
         let currency_code = match record.currency_code {
             Some(cc) => cc,
             None => {
@@ -40,11 +40,14 @@ impl Service {
         self.repo.insert(record).await.map(Into::into)
     }
 
-    pub async fn get_record(self, id: Uuid) -> Result<Record, AppError> {
+    pub async fn get_record(self, id: Uuid) -> Result<RecordRead, AppError> {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn filter_records(self, params: RecordFilterParams) -> Result<Vec<Record>, AppError> {
+    pub async fn filter_records(
+        self,
+        params: RecordFilterParams,
+    ) -> Result<Vec<RecordRead>, AppError> {
         self.repo
             .filter_by_params(params)
             .await

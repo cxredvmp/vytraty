@@ -17,7 +17,7 @@ impl Service {
     pub async fn create_category(
         self,
         category: model::CategoryCreate,
-    ) -> Result<model::Category, AppError> {
+    ) -> Result<model::CategoryRead, AppError> {
         let category = entity::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set(category.name),
@@ -25,11 +25,11 @@ impl Service {
         self.repo.insert(category).await.map(Into::into)
     }
 
-    pub async fn get_category(self, id: Uuid) -> Result<model::Category, AppError> {
+    pub async fn get_category(self, id: Uuid) -> Result<model::CategoryRead, AppError> {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn get_categories(self) -> Result<Vec<model::Category>, AppError> {
+    pub async fn get_categories(self) -> Result<Vec<model::CategoryRead>, AppError> {
         self.repo
             .find_all()
             .await

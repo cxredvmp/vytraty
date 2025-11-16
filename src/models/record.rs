@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use entity::record;
+use entity::record as entity;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -17,7 +17,7 @@ pub struct RecordsBody<T> {
 }
 
 #[derive(Clone, Serialize)]
-pub struct Record {
+pub struct RecordRead {
     pub id: Uuid,
     pub user_id: Uuid,
     pub category_id: Uuid,
@@ -25,8 +25,8 @@ pub struct Record {
     pub sum: Decimal,
 }
 
-impl From<record::Model> for Record {
-    fn from(value: record::Model) -> Self {
+impl From<entity::Model> for RecordRead {
+    fn from(value: entity::Model) -> Self {
         Self {
             id: value.id,
             user_id: value.user_id,

@@ -14,7 +14,7 @@ impl Service {
         Self { repo }
     }
 
-    pub async fn create_user(self, user: model::UserCreate) -> Result<model::User, AppError> {
+    pub async fn create_user(self, user: model::UserCreate) -> Result<model::UserRead, AppError> {
         let user = entity::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set(user.name),
@@ -24,11 +24,11 @@ impl Service {
         self.repo.insert(user).await.map(Into::into)
     }
 
-    pub async fn get_user(self, id: Uuid) -> Result<model::User, AppError> {
+    pub async fn get_user(self, id: Uuid) -> Result<model::UserRead, AppError> {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn get_users(self) -> Result<Vec<model::User>, AppError> {
+    pub async fn get_users(self) -> Result<Vec<model::UserRead>, AppError> {
         self.repo
             .find_all()
             .await

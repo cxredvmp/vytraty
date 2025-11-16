@@ -17,7 +17,7 @@ pub fn router() -> Router<AppState> {
 async fn create_record(
     State(service): State<Service>,
     Json(RecordBody { record }): Json<RecordBody<RecordCreate>>,
-) -> Result<(StatusCode, Json<RecordBody<Record>>), AppError> {
+) -> Result<(StatusCode, Json<RecordBody<RecordRead>>), AppError> {
     record.validate()?;
     let record = service.create_record(record).await?;
     Ok((StatusCode::CREATED, Json(RecordBody { record })))
@@ -26,7 +26,7 @@ async fn create_record(
 async fn get_record(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
-) -> Result<Json<RecordBody<Record>>, AppError> {
+) -> Result<Json<RecordBody<RecordRead>>, AppError> {
     let record = service.get_record(id).await?;
     Ok(Json(RecordBody { record }))
 }
@@ -34,7 +34,7 @@ async fn get_record(
 async fn filter_records(
     State(service): State<Service>,
     Query(params): Query<RecordFilterParams>,
-) -> Result<Json<RecordsBody<Record>>, AppError> {
+) -> Result<Json<RecordsBody<RecordRead>>, AppError> {
     params.validate()?;
     let records = service.filter_records(params).await?;
     Ok(Json(RecordsBody { records }))

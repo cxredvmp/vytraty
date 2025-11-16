@@ -17,7 +17,7 @@ pub fn router() -> Router<AppState> {
 async fn create_user(
     State(service): State<Service>,
     Json(UserBody { user }): Json<UserBody<UserCreate>>,
-) -> Result<(StatusCode, Json<UserBody<User>>), AppError> {
+) -> Result<(StatusCode, Json<UserBody<UserRead>>), AppError> {
     user.validate()?;
     let user = service.create_user(user).await?;
     Ok((StatusCode::CREATED, Json(UserBody { user })))
@@ -26,12 +26,12 @@ async fn create_user(
 async fn get_user(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
-) -> Result<Json<UserBody<User>>, AppError> {
+) -> Result<Json<UserBody<UserRead>>, AppError> {
     let user = service.get_user(id).await?;
     Ok(Json(UserBody { user }))
 }
 
-async fn get_users(State(service): State<Service>) -> Result<Json<UsersBody<User>>, AppError> {
+async fn get_users(State(service): State<Service>) -> Result<Json<UsersBody<UserRead>>, AppError> {
     let users = service.get_users().await?;
     Ok(Json(UsersBody { users }))
 }

@@ -1,4 +1,4 @@
-use entity::category;
+use entity::category as entity;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -15,13 +15,13 @@ pub struct CategoriesBody<T> {
 }
 
 #[derive(Clone, Serialize)]
-pub struct Category {
+pub struct CategoryRead {
     pub id: Uuid,
     pub name: String,
 }
 
-impl From<category::Model> for Category {
-    fn from(value: category::Model) -> Self {
+impl From<entity::Model> for CategoryRead {
+    fn from(value: entity::Model) -> Self {
         Self {
             id: value.id,
             name: value.name,

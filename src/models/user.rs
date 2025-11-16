@@ -1,4 +1,4 @@
-use entity::user;
+use entity::user as entity;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -15,14 +15,14 @@ pub struct UsersBody<T> {
 }
 
 #[derive(Clone, Serialize)]
-pub struct User {
+pub struct UserRead {
     pub id: Uuid,
     pub name: String,
     pub default_currency_code: String,
 }
 
-impl From<user::Model> for User {
-    fn from(value: user::Model) -> Self {
+impl From<entity::Model> for UserRead {
+    fn from(value: entity::Model) -> Self {
         Self {
             id: value.id,
             name: value.name,
