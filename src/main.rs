@@ -58,7 +58,7 @@ async fn main() {
         auth_service,
         config,
     };
-    let router = routes::router().with_state(state);
+    let router = routes::router(state.clone()).with_state(state);
 
     let port = env::var("PORT").expect("PORT must be set");
     let addr = format!("0.0.0.0:{port}");

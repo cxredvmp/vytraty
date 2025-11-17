@@ -1,6 +1,6 @@
-use axum::{Router, routing::get};
+use axum::{Router, middleware, routing::get};
 
-use crate::AppState;
+use crate::{AppState, models::auth as auth_model};
 
 mod auth;
 mod categories;
@@ -8,20 +8,28 @@ mod health;
 mod records;
 mod users;
 
-pub fn router() -> Router<AppState> {
+pub fn router(state: AppState) -> Router<AppState> {
     let health = health::router();
     let users = users::router();
     let categories = categories::router();
     let records = records::router();
     let auth = auth::router();
 
-    Router::new()
+    let public = Router::new()
         .route("/", get(get_root))
-        .nest("/health", health)
+        .nest("/auth", auth)
+        .nest("/health", health);
+
+    let protected = Router::new()
         .nest("/users", users)
         .nest("/categories", categories)
         .nest("/records", records)
-        .nest("/auth", auth)
+        .layer(middleware::from_extractor_with_state::<
+            auth_model::UserAuth,
+            AppState,
+        >(state.clone()));
+
+    Router::new().merge(public).merge(protected)
 }
 
 async fn get_root() -> &'static str {
