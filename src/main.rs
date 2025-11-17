@@ -12,6 +12,7 @@ mod models;
 mod repositories;
 mod routes;
 mod services;
+mod utils;
 
 #[derive(Clone, FromRef)]
 struct AppState {
