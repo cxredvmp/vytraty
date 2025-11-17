@@ -8,10 +8,13 @@ use axum::{
 use sea_orm::DbErr;
 use serde::Serialize;
 
+#[derive(Debug)]
 pub enum AppError {
     NotFound,
     UnprocessableEntity(UnprocessableEntityBody),
     Database(DbErr),
+    Unauthorized,
+    Internal(String),
 }
 
 #[derive(Serialize)]
@@ -27,7 +30,7 @@ impl GenericErrorBody {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct UnprocessableEntityBody {
     pub errors: HashMap<&'static str, &'static str>,
 }
@@ -46,6 +49,8 @@ impl AppError {
             Self::NotFound => StatusCode::NOT_FOUND,
             Self::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,
             Self::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Unauthorized => StatusCode::UNAUTHORIZED,
+            Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
@@ -59,14 +64,19 @@ impl From<DbErr> for AppError {
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let status = self.status_code();
-        match self {
-            Self::UnprocessableEntity(errors) => (status, Json(errors)).into_response(),
+
+        match &self {
             Self::Database(e) => {
                 eprintln!("database error: {:?}", e);
-
-                let body = GenericErrorBody::from_status(status);
-                (status, Json(body)).into_response()
             }
+            Self::Internal(e) => {
+                eprintln!("internal error: {:?}", e);
+            }
+            _ => {}
+        }
+
+        match self {
+            Self::UnprocessableEntity(errors) => (status, Json(errors)).into_response(),
             _ => {
                 let body = GenericErrorBody::from_status(status);
                 (status, Json(body)).into_response()
