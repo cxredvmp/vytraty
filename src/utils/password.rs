@@ -21,12 +21,11 @@ pub async fn verify_password(password: String, password_hash: String) -> Result<
     tokio::task::spawn_blocking(move || -> Result<(), AppError> {
         let hash = PasswordHash::new(&password_hash)
             .map_err(|e| AppError::Internal(format!("invalid password hash: {e}")))?;
-        Ok(hash
-            .verify_password(&[&Argon2::default()], password)
+        hash.verify_password(&[&Argon2::default()], password)
             .map_err(|e| match e {
                 argon2::password_hash::Error::Password => AppError::Unauthorized,
                 _ => AppError::Internal(format!("failed to verify password: {e}")),
-            })?)
+            })
     })
     .await
     .map_err(|e| AppError::Internal(format!("failed to join thread: {e}")))
