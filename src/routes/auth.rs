@@ -30,5 +30,8 @@ async fn login_user(
     State(service): State<Service>,
     Json(creds): Json<UserLogin>,
 ) -> Result<Json<user_model::UserBody<user_model::UserRead>>, AppError> {
-    todo!()
+    creds.validate()?;
+    Ok(Json(user_model::UserBody {
+        user: service.login_user(creds).await?,
+    }))
 }

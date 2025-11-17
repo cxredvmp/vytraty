@@ -1,5 +1,6 @@
 use entity::user as user_entity;
 use sea_orm::ActiveValue::Set;
+use tokio::sync::OnceCell;
 use uuid::Uuid;
 
 use crate::{
@@ -8,6 +9,15 @@ use crate::{
     repositories::user::Repository as UserRepository,
     utils::password::*,
 };
+
+static DUMMY_HASH: OnceCell<String> = OnceCell::const_new();
+async fn get_dummy_hash() -> Result<&'static String, AppError> {
+    DUMMY_HASH
+        .get_or_try_init(async || -> Result<String, AppError> {
+            hash_password("password".to_string()).await
+        })
+        .await
+}
 
 #[derive(Clone)]
 pub struct Service {
@@ -36,6 +46,20 @@ impl Service {
         &self,
         creds: model::UserLogin,
     ) -> Result<user_model::UserRead, AppError> {
-        todo!()
+        let user = match self.user_repo.find_by_name(&creds.name).await {
+            Ok(user) => Ok(Some(user)),
+            Err(AppError::NotFound) => Ok(None),
+            Err(e) => Err(e),
+        }?;
+        let password_hash = match &user {
+            Some(user) => user.password_hash.clone(),
+            None => get_dummy_hash().await?.to_string(),
+        };
+        verify_password(creds.password, password_hash)
+            .await
+            .and_then(|_| match user {
+                Some(user) => Ok(user.into()),
+                None => Err(AppError::Unauthorized),
+            })
     }
 }
