@@ -2,7 +2,7 @@ use axum::{
     Json, Router,
     extract::{Path, State},
     http::StatusCode,
-    routing::{get, post},
+    routing::get,
 };
 use uuid::Uuid;
 
@@ -10,17 +10,8 @@ use crate::{AppState, error::AppError, models::user::*, services::user::Service}
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/", post(create_user).get(get_users))
+        .route("/", get(get_users))
         .route("/{id}", get(get_user).delete(delete_user))
-}
-
-async fn create_user(
-    State(service): State<Service>,
-    Json(UserBody { user }): Json<UserBody<UserCreate>>,
-) -> Result<(StatusCode, Json<UserBody<UserRead>>), AppError> {
-    user.validate()?;
-    let user = service.create_user(user).await?;
-    Ok((StatusCode::CREATED, Json(UserBody { user })))
 }
 
 async fn get_user(
