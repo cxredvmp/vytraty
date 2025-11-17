@@ -21,6 +21,7 @@ struct AppState {
     category_service: services::category::Service,
     record_service: services::record::Service,
     auth_service: services::auth::Service,
+    config: Config,
 }
 
 #[tokio::main]
@@ -54,6 +55,7 @@ async fn main() {
         category_service,
         record_service,
         auth_service,
+        config,
     };
     let router = routes::router().with_state(state);
 

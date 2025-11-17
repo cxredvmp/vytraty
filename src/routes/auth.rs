@@ -5,6 +5,7 @@ use crate::{
     error::AppError,
     models::{auth::*, user as user_model},
     services::auth::Service,
+    utils::jwt,
 };
 
 pub fn router() -> Router<AppState> {
@@ -25,9 +26,14 @@ async fn register_user(
 }
 
 async fn login_user(
-    State(service): State<Service>,
+    State(state): State<AppState>,
     Json(creds): Json<UserLogin>,
-) -> Result<Json<user_model::UserBody<user_model::UserRead>>, AppError> {
+) -> Result<Json<Token>, AppError> {
     creds.validate()?;
-    Ok(Json(service.login_user(creds).await?.into()))
+    let user = state.auth_service.login_user(creds).await?;
+    let token = jwt::sign(user.id, state.config.jwt_secret())?;
+    Ok(Json(Token {
+        token,
+        schema: "Bearer".to_string(),
+    }))
 }

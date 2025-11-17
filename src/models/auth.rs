@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::error::AppError;
 
@@ -57,4 +57,10 @@ impl UserLogin {
             Err(AppError::unprocessable_entity(errors))
         }
     }
+}
+
+#[derive(Serialize)]
+pub struct Token {
+    pub token: String,
+    pub schema: String,
 }
