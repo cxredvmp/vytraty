@@ -20,6 +20,7 @@ struct AppState {
     user_service: services::user::Service,
     category_service: services::category::Service,
     record_service: services::record::Service,
+    auth_service: services::auth::Service,
 }
 
 #[tokio::main]
@@ -43,14 +44,16 @@ async fn main() {
 
     let health_service = services::health::Service::new(db.clone());
     let user_service = services::user::Service::new(user_repo.clone());
-    let category_service = services::category::Service::new(category_repo);
-    let record_service = services::record::Service::new(record_repo, user_repo);
+    let category_service = services::category::Service::new(category_repo.clone());
+    let record_service = services::record::Service::new(record_repo.clone(), user_repo.clone());
+    let auth_service = services::auth::Service::new(user_repo.clone());
 
     let state = AppState {
         health_service,
         user_service,
         category_service,
         record_service,
+        auth_service,
     };
     let router = routes::router().with_state(state);
 
