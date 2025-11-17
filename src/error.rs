@@ -10,11 +10,12 @@ use serde::Serialize;
 
 #[derive(Debug)]
 pub enum AppError {
+    Forbidden,
     NotFound,
-    UnprocessableEntity(UnprocessableEntityBody),
-    Database(DbErr),
     Unauthorized,
+    UnprocessableEntity(UnprocessableEntityBody),
     Internal(String),
+    Database(DbErr),
 }
 
 #[derive(Serialize)]
@@ -46,11 +47,12 @@ impl AppError {
 
     pub fn status_code(&self) -> StatusCode {
         match self {
+            Self::Forbidden => StatusCode::FORBIDDEN,
             Self::NotFound => StatusCode::NOT_FOUND,
-            Self::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,
-            Self::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Unauthorized => StatusCode::UNAUTHORIZED,
+            Self::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,
             Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
@@ -66,11 +68,11 @@ impl IntoResponse for AppError {
         let status = self.status_code();
 
         match &self {
-            Self::Database(e) => {
-                eprintln!("database error: {:?}", e);
-            }
             Self::Internal(e) => {
                 eprintln!("internal error: {:?}", e);
+            }
+            Self::Database(e) => {
+                eprintln!("database error: {:?}", e);
             }
             _ => {}
         }
