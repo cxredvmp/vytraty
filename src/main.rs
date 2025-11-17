@@ -8,6 +8,7 @@ use crate::config::Config;
 
 mod config;
 mod error;
+mod middleware;
 mod models;
 mod repositories;
 mod routes;

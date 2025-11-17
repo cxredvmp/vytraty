@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::error::AppError;
 
@@ -63,4 +64,9 @@ impl UserLogin {
 pub struct Token {
     pub token: String,
     pub schema: String,
+}
+
+#[derive(Clone)]
+pub struct UserAuth {
+    pub id: Uuid,
 }
