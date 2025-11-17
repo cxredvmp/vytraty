@@ -20,9 +20,7 @@ async fn register_user(
     user.validate()?;
     Ok((
         StatusCode::CREATED,
-        Json(user_model::UserBody {
-            user: service.register_user(user).await?,
-        }),
+        Json(service.register_user(user).await?.into()),
     ))
 }
 
@@ -31,7 +29,5 @@ async fn login_user(
     Json(creds): Json<UserLogin>,
 ) -> Result<Json<user_model::UserBody<user_model::UserRead>>, AppError> {
     creds.validate()?;
-    Ok(Json(user_model::UserBody {
-        user: service.login_user(creds).await?,
-    }))
+    Ok(Json(service.login_user(creds).await?.into()))
 }

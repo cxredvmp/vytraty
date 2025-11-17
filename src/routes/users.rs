@@ -19,12 +19,12 @@ async fn get_user(
     Path(id): Path<Uuid>,
 ) -> Result<Json<UserBody<UserRead>>, AppError> {
     let user = service.get_user(id).await?;
-    Ok(Json(UserBody { user }))
+    Ok(Json(user.into()))
 }
 
 async fn get_users(State(service): State<Service>) -> Result<Json<UsersBody<UserRead>>, AppError> {
     let users = service.get_users().await?;
-    Ok(Json(UsersBody { users }))
+    Ok(Json(users.into()))
 }
 
 async fn delete_user(

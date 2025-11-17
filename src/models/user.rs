@@ -28,3 +28,15 @@ impl From<entity::Model> for UserRead {
         }
     }
 }
+
+impl From<UserRead> for UserBody<UserRead> {
+    fn from(value: UserRead) -> Self {
+        Self { user: value }
+    }
+}
+
+impl From<Vec<UserRead>> for UsersBody<UserRead> {
+    fn from(value: Vec<UserRead>) -> Self {
+        Self { users: value }
+    }
+}
