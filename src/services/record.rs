@@ -44,12 +44,12 @@ impl Service {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn filter_by_params(
+    pub async fn find_by_filters(
         self,
-        params: RecordFilterParams,
+        filters: RecordFilters,
     ) -> Result<Vec<RecordRead>, AppError> {
         self.repo
-            .filter_by_params(params)
+            .find_by_filters(filters)
             .await
             .map(|entities| entities.into_iter().map(Into::into).collect())
     }

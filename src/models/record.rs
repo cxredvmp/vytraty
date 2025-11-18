@@ -70,16 +70,16 @@ impl RecordCreate {
 }
 
 #[derive(Deserialize)]
-pub struct RecordFilterParams {
+pub struct RecordFilters {
     pub user_id: Option<Uuid>,
     pub category_id: Option<Uuid>,
 }
 
-impl RecordFilterParams {
+impl RecordFilters {
     pub fn validate(&self) -> Result<(), AppError> {
         if self.user_id.is_none() && self.category_id.is_none() {
             Err(AppError::unprocessable_entity([(
-                "params",
+                "filters",
                 "at least one is required",
             )]))
         } else {

@@ -43,15 +43,15 @@ impl Repository {
             .ok_or(AppError::NotFound)
     }
 
-    pub async fn filter_by_params(
+    pub async fn find_by_filters(
         &self,
-        params: model::RecordFilterParams,
+        filters: model::RecordFilters,
     ) -> Result<Vec<entity::Model>, AppError> {
         entity::Entity::find()
-            .apply_if(params.user_id, |query, id| {
+            .apply_if(filters.user_id, |query, id| {
                 query.filter(entity::Column::UserId.eq(id))
             })
-            .apply_if(params.category_id, |query, id| {
+            .apply_if(filters.category_id, |query, id| {
                 query.filter(entity::Column::CategoryId.eq(id))
             })
             .all(&self.db)

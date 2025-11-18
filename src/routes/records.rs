@@ -15,7 +15,7 @@ use crate::{
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/", post(create).get(filter_by_params))
+        .route("/", post(create).get(find_by_filters))
         .route("/{id}", get(get_by_id).delete(delete_owned))
 }
 
@@ -36,12 +36,12 @@ async fn get_by_id(
     Ok(Json(RecordBody { record }))
 }
 
-async fn filter_by_params(
+async fn find_by_filters(
     State(service): State<Service>,
-    Query(params): Query<RecordFilterParams>,
+    Query(filters): Query<RecordFilters>,
 ) -> Result<Json<RecordsBody<RecordRead>>, AppError> {
-    params.validate()?;
-    let records = service.filter_by_params(params).await?;
+    filters.validate()?;
+    let records = service.find_by_filters(filters).await?;
     Ok(Json(RecordsBody { records }))
 }
 
