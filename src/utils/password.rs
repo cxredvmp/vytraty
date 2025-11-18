@@ -5,7 +5,7 @@ use argon2::{
 
 use crate::error::AppError;
 
-pub async fn hash_password(password: String) -> Result<String, AppError> {
+pub async fn hash(password: String) -> Result<String, AppError> {
     tokio::task::spawn_blocking(move || -> Result<String, AppError> {
         let salt = SaltString::generate(&mut OsRng);
         Ok(PasswordHash::generate(Argon2::default(), password, &salt)
@@ -17,7 +17,7 @@ pub async fn hash_password(password: String) -> Result<String, AppError> {
     .flatten()
 }
 
-pub async fn verify_password(password: String, password_hash: String) -> Result<(), AppError> {
+pub async fn verify(password: String, password_hash: String) -> Result<(), AppError> {
     tokio::task::spawn_blocking(move || -> Result<(), AppError> {
         let hash = PasswordHash::new(&password_hash)
             .map_err(|e| AppError::Internal(format!("invalid password hash: {e}")))?;
