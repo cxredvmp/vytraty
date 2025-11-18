@@ -29,9 +29,9 @@ impl Service {
         Self { user_repo }
     }
 
-    pub async fn register_user(
+    pub async fn sign_up_user(
         &self,
-        user: model::UserRegister,
+        user: model::UserSignUp,
     ) -> Result<user_model::UserRead, AppError> {
         let user = user_entity::ActiveModel {
             id: Set(Uuid::new_v4()),
@@ -42,9 +42,9 @@ impl Service {
         self.user_repo.insert(user).await.map(Into::into)
     }
 
-    pub async fn login_user(
+    pub async fn sign_in_user(
         &self,
-        creds: model::UserLogin,
+        creds: model::UserSignIn,
     ) -> Result<user_model::UserRead, AppError> {
         let user = match self.user_repo.find_by_name(&creds.name).await {
             Ok(user) => Ok(Some(user)),

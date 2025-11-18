@@ -10,27 +10,27 @@ use crate::{
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/register", post(register_user))
-        .route("/login", post(login_user))
+        .route("/signup", post(sign_up_user))
+        .route("/signin", post(sign_in_user))
 }
 
-async fn register_user(
+async fn sign_up_user(
     State(service): State<Service>,
-    Json(user): Json<UserRegister>,
+    Json(user): Json<UserSignUp>,
 ) -> Result<(StatusCode, Json<user_model::UserBody<user_model::UserRead>>), AppError> {
     user.validate()?;
     Ok((
         StatusCode::CREATED,
-        Json(service.register_user(user).await?.into()),
+        Json(service.sign_up_user(user).await?.into()),
     ))
 }
 
-async fn login_user(
+async fn sign_in_user(
     State(state): State<AppState>,
-    Json(creds): Json<UserLogin>,
+    Json(creds): Json<UserSignIn>,
 ) -> Result<Json<Token>, AppError> {
     creds.validate()?;
-    let user = state.auth_service.login_user(creds).await?;
+    let user = state.auth_service.sign_in_user(creds).await?;
     let token = jwt::sign(user.id, state.config.jwt_secret())?;
     Ok(Json(Token {
         token,

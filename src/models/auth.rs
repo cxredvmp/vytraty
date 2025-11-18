@@ -4,13 +4,13 @@ use uuid::Uuid;
 use crate::error::AppError;
 
 #[derive(Deserialize)]
-pub struct UserRegister {
+pub struct UserSignUp {
     pub name: String,
     pub default_currency_code: String,
     pub password: String,
 }
 
-impl UserRegister {
+impl UserSignUp {
     pub fn validate(&self) -> Result<(), AppError> {
         let mut errors = Vec::new();
 
@@ -35,12 +35,12 @@ impl UserRegister {
 }
 
 #[derive(Deserialize)]
-pub struct UserLogin {
+pub struct UserSignIn {
     pub name: String,
     pub password: String,
 }
 
-impl UserLogin {
+impl UserSignIn {
     pub fn validate(&self) -> Result<(), AppError> {
         let mut errors = Vec::new();
 
