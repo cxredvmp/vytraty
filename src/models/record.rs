@@ -50,7 +50,7 @@ impl RecordCreate {
         let mut errors = Vec::new();
 
         if self.sum <= Decimal::ZERO {
-            errors.push(("sum", "sum is not positive"));
+            errors.push(("sum", "must be positive"));
         }
 
         if self
@@ -58,7 +58,7 @@ impl RecordCreate {
             .as_deref()
             .is_some_and(|cc| cc.is_empty())
         {
-            errors.push(("currency_code", "currency_code is empty"));
+            errors.push(("currency_code", "cannot be empty"));
         }
 
         if errors.is_empty() {
@@ -80,7 +80,7 @@ impl RecordFilterParams {
         if self.user_id.is_none() && self.category_id.is_none() {
             Err(AppError::unprocessable_entity([(
                 "params",
-                "no filter params provided",
+                "at least one is required",
             )]))
         } else {
             Ok(())

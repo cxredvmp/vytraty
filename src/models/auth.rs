@@ -15,20 +15,17 @@ impl UserSignUp {
         let mut errors = Vec::new();
 
         if self.name.is_empty() {
-            errors.push(("name", "name is empty"));
+            errors.push(("name", "cannot be empty"));
         }
 
         if self.default_currency_code.is_empty() {
-            errors.push(("default_currency_code", "default_currency_code is empty"));
+            errors.push(("default_currency_code", "cannot be empty"));
         } else if self.default_currency_code.len() != 3 {
-            errors.push((
-                "default_currency_code",
-                "default_currency_code has invalid length",
-            ));
+            errors.push(("default_currency_code", "must be 3 chars long"));
         }
 
         if self.password.is_empty() {
-            errors.push(("password", "password is empty"));
+            errors.push(("password", "cannot be empty"));
         }
 
         if errors.is_empty() {
@@ -50,11 +47,11 @@ impl UserSignIn {
         let mut errors = Vec::new();
 
         if self.name.is_empty() {
-            errors.push(("name", "name is empty"));
+            errors.push(("name", "cannot be empty"));
         }
 
         if self.password.is_empty() {
-            errors.push(("password", "password is empty"));
+            errors.push(("password", "cannot be empty"));
         }
 
         if errors.is_empty() {

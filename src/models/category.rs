@@ -39,7 +39,7 @@ impl CategoryCreate {
         let mut errors = Vec::new();
 
         if self.name.is_empty() {
-            errors.push(("name", "name is empty"));
+            errors.push(("name", "cannot be empty"));
         }
 
         if errors.is_empty() {
