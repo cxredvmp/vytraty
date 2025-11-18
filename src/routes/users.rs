@@ -15,12 +15,12 @@ use crate::{
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/", get(get_users))
-        .route("/{id}", get(get_user))
+        .route("/", get(get_all))
+        .route("/{id}", get(get_by_id))
         .route("/me", delete(delete_me))
 }
 
-async fn get_user(
+async fn get_by_id(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<UserBody<UserRead>>, AppError> {
@@ -28,12 +28,12 @@ async fn get_user(
     Ok(Json(user.into()))
 }
 
-async fn get_users(State(service): State<Service>) -> Result<Json<UsersBody<UserRead>>, AppError> {
+async fn get_all(State(service): State<Service>) -> Result<Json<UsersBody<UserRead>>, AppError> {
     let users = service.get_all().await?;
     Ok(Json(users.into()))
 }
 
-async fn delete_user(
+async fn delete_by_id(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {

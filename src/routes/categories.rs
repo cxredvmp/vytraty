@@ -10,11 +10,11 @@ use crate::{AppState, error::AppError, models::category::*, services::category::
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/", post(create_category).get(get_categories))
-        .route("/{id}", get(get_category).delete(delete_category))
+        .route("/", post(create).get(get_all))
+        .route("/{id}", get(get_by_id).delete(delete_by_id))
 }
 
-async fn create_category(
+async fn create(
     State(service): State<Service>,
     Json(CategoryBody { category }): Json<CategoryBody<CategoryCreate>>,
 ) -> Result<(StatusCode, Json<CategoryBody<CategoryRead>>), AppError> {
@@ -23,7 +23,7 @@ async fn create_category(
     Ok((StatusCode::CREATED, Json(CategoryBody { category })))
 }
 
-async fn get_category(
+async fn get_by_id(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<CategoryBody<CategoryRead>>, AppError> {
@@ -31,14 +31,14 @@ async fn get_category(
     Ok(Json(CategoryBody { category }))
 }
 
-async fn get_categories(
+async fn get_all(
     State(service): State<Service>,
 ) -> Result<Json<CategoriesBody<CategoryRead>>, AppError> {
     let categories = service.get_all().await?;
     Ok(Json(CategoriesBody { categories }))
 }
 
-async fn delete_category(
+async fn delete_by_id(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {

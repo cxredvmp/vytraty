@@ -4,10 +4,10 @@ use chrono::Utc;
 use crate::{AppState, models::health::*, services::health::Service};
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/", get(get_health))
+    Router::new().route("/", get(check))
 }
 
-async fn get_health(State(service): State<Service>) -> Health {
+async fn check(State(service): State<Service>) -> Health {
     let services = Services {
         db: service.check_db().await,
     };

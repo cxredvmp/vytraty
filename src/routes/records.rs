@@ -15,11 +15,11 @@ use crate::{
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/", post(create_record).get(filter_records))
-        .route("/{id}", get(get_record).delete(delete_user_record))
+        .route("/", post(create).get(filter_by_params))
+        .route("/{id}", get(get_by_id).delete(delete_owned))
 }
 
-async fn create_record(
+async fn create(
     State(service): State<Service>,
     Json(RecordBody { record }): Json<RecordBody<RecordCreate>>,
 ) -> Result<(StatusCode, Json<RecordBody<RecordRead>>), AppError> {
@@ -28,7 +28,7 @@ async fn create_record(
     Ok((StatusCode::CREATED, Json(RecordBody { record })))
 }
 
-async fn get_record(
+async fn get_by_id(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<RecordBody<RecordRead>>, AppError> {
@@ -36,7 +36,7 @@ async fn get_record(
     Ok(Json(RecordBody { record }))
 }
 
-async fn filter_records(
+async fn filter_by_params(
     State(service): State<Service>,
     Query(params): Query<RecordFilterParams>,
 ) -> Result<Json<RecordsBody<RecordRead>>, AppError> {
@@ -45,7 +45,7 @@ async fn filter_records(
     Ok(Json(RecordsBody { records }))
 }
 
-async fn delete_user_record(
+async fn delete_owned(
     State(service): State<Service>,
     Path(record_id): Path<Uuid>,
     Extension(user_auth): Extension<auth_model::UserAuth>,
