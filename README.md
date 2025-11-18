@@ -1,11 +1,5 @@
 # Backend Development: Lab 3
 
-## Variant
-
-Calculation: `25 % 3 = 1`
-
-Description: Add currencies to the application
-
 ## Run
 
 ### Clone the repository:
