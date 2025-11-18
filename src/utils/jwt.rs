@@ -3,7 +3,7 @@ use jsonwebtoken::*;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
@@ -33,6 +33,6 @@ pub fn verify(token: &str, secret: &str) -> Result<Claims, AppError> {
         &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::default(),
     )
-    .map_err(|_| AppError::Unauthorized)
+    .map_err(|_| AppError::Auth)
     .map(|data| data.claims)
 }

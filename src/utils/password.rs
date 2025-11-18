@@ -3,7 +3,7 @@ use argon2::{
     password_hash::{SaltString, rand_core::OsRng},
 };
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 pub async fn hash(password: String) -> Result<String, AppError> {
     tokio::task::spawn_blocking(move || -> Result<String, AppError> {
@@ -23,7 +23,7 @@ pub async fn verify(password: String, password_hash: String) -> Result<(), AppEr
             .map_err(|e| AppError::Internal(format!("invalid password hash: {e}")))?;
         hash.verify_password(&[&Argon2::default()], password)
             .map_err(|e| match e {
-                argon2::password_hash::Error::Password => AppError::Unauthorized,
+                argon2::password_hash::Error::Password => AppError::Auth,
                 _ => AppError::Internal(format!("failed to verify password: {e}")),
             })
     })

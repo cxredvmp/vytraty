@@ -2,7 +2,7 @@ use axum::{Json, Router, extract::State, http::StatusCode, routing::post};
 
 use crate::{
     AppState,
-    error::AppError,
+    errors::AppError,
     models::{auth::*, user as user_model},
     services::auth::Service,
     utils::jwt,

@@ -2,7 +2,7 @@ use entity::user as entity;
 use sea_orm::{DatabaseConnection, SqlErr, entity::*, query::*};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Clone)]
 pub struct Repository {
@@ -21,14 +21,14 @@ impl Repository {
                 if e.contains("user_name_key") {
                     errors.push(("name", "user already exists"));
                 }
-                AppError::unprocessable_entity(errors)
+                AppError::validation(errors)
             }
             Some(SqlErr::ForeignKeyConstraintViolation(e)) => {
                 let mut errors = Vec::new();
                 if e.contains("fk_user_currency") {
                     errors.push(("default_currency_code", "currency doesn't exist"));
                 }
-                AppError::unprocessable_entity(errors)
+                AppError::validation(errors)
             }
             _ => e.into(),
         })

@@ -6,7 +6,7 @@ use axum::{
 };
 use uuid::Uuid;
 
-use crate::{AppState, error::AppError, models::category::*, services::category::Service};
+use crate::{AppState, errors::AppError, models::category::*, services::category::Service};
 
 pub fn router() -> Router<AppState> {
     Router::new()

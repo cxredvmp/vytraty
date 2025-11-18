@@ -2,7 +2,7 @@ use entity::record as entity;
 use sea_orm::{DatabaseConnection, QueryFilter, QueryTrait, SqlErr, entity::*};
 use uuid::Uuid;
 
-use crate::{error::AppError, models::record as model};
+use crate::{errors::AppError, models::record as model};
 
 #[derive(Clone)]
 pub struct Repository {
@@ -30,7 +30,7 @@ impl Repository {
                     if e.contains("fk_record_currency") {
                         errors.push(("currency_code", "currency code doesn't exist"))
                     }
-                    AppError::unprocessable_entity(errors)
+                    AppError::validation(errors)
                 }
                 _ => e.into(),
             })

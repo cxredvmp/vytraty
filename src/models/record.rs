@@ -4,7 +4,7 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Serialize, Deserialize)]
 pub struct RecordBody<T> {
@@ -64,7 +64,7 @@ impl RecordCreate {
         if errors.is_empty() {
             Ok(())
         } else {
-            Err(AppError::unprocessable_entity(errors))
+            Err(AppError::validation(errors))
         }
     }
 }
@@ -78,7 +78,7 @@ pub struct RecordFilters {
 impl RecordFilters {
     pub fn validate(&self) -> Result<(), AppError> {
         if self.user_id.is_none() && self.category_id.is_none() {
-            Err(AppError::unprocessable_entity([(
+            Err(AppError::validation([(
                 "filters",
                 "at least one is required",
             )]))

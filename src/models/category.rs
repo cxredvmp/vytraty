@@ -2,7 +2,7 @@ use entity::category as entity;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Serialize, Deserialize)]
 pub struct CategoryBody<T> {
@@ -45,7 +45,7 @@ impl CategoryCreate {
         if errors.is_empty() {
             Ok(())
         } else {
-            Err(AppError::unprocessable_entity(errors))
+            Err(AppError::validation(errors))
         }
     }
 }

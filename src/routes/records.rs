@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::{
     AppState,
-    error::AppError,
+    errors::AppError,
     models::{auth as auth_model, record::*},
     services::record::Service,
 };

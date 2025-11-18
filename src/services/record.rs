@@ -4,7 +4,7 @@ use sea_orm::ActiveValue::Set;
 use uuid::Uuid;
 
 use crate::{
-    error::AppError,
+    errors::AppError,
     models::record::*,
     repositories::{record::Repository, user::Repository as UserRepository},
 };

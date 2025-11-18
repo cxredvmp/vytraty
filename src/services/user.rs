@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::{error::AppError, models::user as model, repositories::user::Repository};
+use crate::{errors::AppError, models::user as model, repositories::user::Repository};
 
 #[derive(Clone)]
 pub struct Service {

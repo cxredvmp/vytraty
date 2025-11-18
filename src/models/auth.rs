@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Deserialize)]
 pub struct UserSignUp {
@@ -31,7 +31,7 @@ impl UserSignUp {
         if errors.is_empty() {
             Ok(())
         } else {
-            Err(AppError::unprocessable_entity(errors))
+            Err(AppError::validation(errors))
         }
     }
 }
@@ -57,7 +57,7 @@ impl UserSignIn {
         if errors.is_empty() {
             Ok(())
         } else {
-            Err(AppError::unprocessable_entity(errors))
+            Err(AppError::validation(errors))
         }
     }
 }

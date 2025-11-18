@@ -7,7 +7,7 @@ use sea_orm::Database;
 use crate::config::Config;
 
 mod config;
-mod error;
+mod errors;
 mod middleware;
 mod models;
 mod repositories;

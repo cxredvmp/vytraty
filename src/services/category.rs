@@ -2,7 +2,7 @@ use entity::category as entity;
 use sea_orm::ActiveValue::Set;
 use uuid::Uuid;
 
-use crate::{error::AppError, models::category as model, repositories::category::Repository};
+use crate::{errors::AppError, models::category as model, repositories::category::Repository};
 
 #[derive(Clone)]
 pub struct Service {

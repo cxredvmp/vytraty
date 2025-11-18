@@ -2,7 +2,7 @@ use entity::category as entity;
 use sea_orm::{DatabaseConnection, SqlErr, entity::*};
 use uuid::Uuid;
 
-use crate::error::AppError;
+use crate::errors::AppError;
 
 #[derive(Clone)]
 pub struct Repository {
@@ -24,7 +24,7 @@ impl Repository {
                     if e.contains("category_name_key") {
                         errors.push(("name", "category already exists"));
                     }
-                    AppError::unprocessable_entity(errors)
+                    AppError::validation(errors)
                 }
                 _ => e.into(),
             })
