@@ -1,17 +1,23 @@
 use axum::{
-    Json, Router,
+    Extension, Json, Router,
     extract::{Path, State},
     http::StatusCode,
-    routing::get,
+    routing::{delete, get},
 };
 use uuid::Uuid;
 
-use crate::{AppState, error::AppError, models::user::*, services::user::Service};
+use crate::{
+    AppState,
+    error::AppError,
+    models::{auth as auth_model, user::*},
+    services::user::Service,
+};
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(get_users))
-        .route("/{id}", get(get_user).delete(delete_user))
+        .route("/{id}", get(get_user))
+        .route("/me", delete(delete_me))
 }
 
 async fn get_user(
@@ -32,5 +38,13 @@ async fn delete_user(
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
     service.delete_user(id).await?;
+    Ok(StatusCode::NO_CONTENT)
+}
+
+async fn delete_me(
+    State(service): State<Service>,
+    Extension(user_auth): Extension<auth_model::UserAuth>,
+) -> Result<StatusCode, AppError> {
+    service.delete_user(user_auth.id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
