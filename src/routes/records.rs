@@ -1,17 +1,22 @@
 use axum::{
-    Json, Router,
+    Extension, Json, Router,
     extract::{Path, Query, State},
     http::StatusCode,
     routing::{get, post},
 };
 use uuid::Uuid;
 
-use crate::{AppState, error::AppError, models::record::*, services::record::Service};
+use crate::{
+    AppState,
+    error::AppError,
+    models::{auth as auth_model, record::*},
+    services::record::Service,
+};
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", post(create_record).get(filter_records))
-        .route("/{id}", get(get_record).delete(delete_record))
+        .route("/{id}", get(get_record).delete(delete_user_record))
 }
 
 async fn create_record(
@@ -40,10 +45,13 @@ async fn filter_records(
     Ok(Json(RecordsBody { records }))
 }
 
-async fn delete_record(
+async fn delete_user_record(
     State(service): State<Service>,
-    Path(id): Path<Uuid>,
+    Path(record_id): Path<Uuid>,
+    Extension(user_auth): Extension<auth_model::UserAuth>,
 ) -> Result<StatusCode, AppError> {
-    service.delete_record(id).await?;
+    service
+        .delete_record_by_user(record_id, user_auth.id)
+        .await?;
     Ok(StatusCode::NO_CONTENT)
 }

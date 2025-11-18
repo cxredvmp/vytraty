@@ -57,4 +57,12 @@ impl Service {
     pub async fn delete_record(self, id: Uuid) -> Result<(), AppError> {
         self.repo.delete_by_id(id).await
     }
+
+    pub async fn delete_record_by_user(
+        self,
+        record_id: Uuid,
+        user_id: Uuid,
+    ) -> Result<(), AppError> {
+        self.repo.delete_owned(record_id, user_id).await
+    }
 }

@@ -69,4 +69,17 @@ impl Repository {
                 _ => Ok(()),
             })
     }
+
+    pub async fn delete_owned(&self, record_id: Uuid, user_id: Uuid) -> Result<(), AppError> {
+        entity::Entity::delete_many()
+            .filter(entity::Column::Id.eq(record_id))
+            .filter(entity::Column::UserId.eq(user_id))
+            .exec(&self.db)
+            .await
+            .map_err(Into::into)
+            .and_then(|res| match res.rows_affected {
+                0 => Err(AppError::NotFound),
+                _ => Ok(()),
+            })
+    }
 }
