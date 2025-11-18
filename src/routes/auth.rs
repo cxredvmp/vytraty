@@ -21,7 +21,7 @@ async fn sign_up_user(
     user.validate()?;
     Ok((
         StatusCode::CREATED,
-        Json(service.sign_up_user(user).await?.into()),
+        Json(service.sign_up(user).await?.into()),
     ))
 }
 
@@ -30,7 +30,7 @@ async fn sign_in_user(
     Json(creds): Json<UserSignIn>,
 ) -> Result<Json<Token>, AppError> {
     creds.validate()?;
-    let user = state.auth_service.sign_in_user(creds).await?;
+    let user = state.auth_service.sign_in(creds).await?;
     let token = jwt::sign(user.id, state.config.jwt_secret())?;
     Ok(Json(Token {
         token,

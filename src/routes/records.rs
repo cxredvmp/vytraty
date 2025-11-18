@@ -24,7 +24,7 @@ async fn create_record(
     Json(RecordBody { record }): Json<RecordBody<RecordCreate>>,
 ) -> Result<(StatusCode, Json<RecordBody<RecordRead>>), AppError> {
     record.validate()?;
-    let record = service.create_record(record).await?;
+    let record = service.create(record).await?;
     Ok((StatusCode::CREATED, Json(RecordBody { record })))
 }
 
@@ -32,7 +32,7 @@ async fn get_record(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<RecordBody<RecordRead>>, AppError> {
-    let record = service.get_record(id).await?;
+    let record = service.get_by_id(id).await?;
     Ok(Json(RecordBody { record }))
 }
 
@@ -41,7 +41,7 @@ async fn filter_records(
     Query(params): Query<RecordFilterParams>,
 ) -> Result<Json<RecordsBody<RecordRead>>, AppError> {
     params.validate()?;
-    let records = service.filter_records(params).await?;
+    let records = service.filter_by_params(params).await?;
     Ok(Json(RecordsBody { records }))
 }
 
@@ -50,8 +50,6 @@ async fn delete_user_record(
     Path(record_id): Path<Uuid>,
     Extension(user_auth): Extension<auth_model::UserAuth>,
 ) -> Result<StatusCode, AppError> {
-    service
-        .delete_record_by_user(record_id, user_auth.id)
-        .await?;
+    service.delete_owned(record_id, user_auth.id).await?;
     Ok(StatusCode::NO_CONTENT)
 }

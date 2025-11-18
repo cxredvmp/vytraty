@@ -20,7 +20,7 @@ impl Service {
         Self { repo, user_repo }
     }
 
-    pub async fn create_record(self, record: RecordCreate) -> Result<RecordRead, AppError> {
+    pub async fn create(self, record: RecordCreate) -> Result<RecordRead, AppError> {
         let currency_code = match record.currency_code {
             Some(cc) => cc,
             None => {
@@ -40,11 +40,11 @@ impl Service {
         self.repo.insert(record).await.map(Into::into)
     }
 
-    pub async fn get_record(self, id: Uuid) -> Result<RecordRead, AppError> {
+    pub async fn get_by_id(self, id: Uuid) -> Result<RecordRead, AppError> {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn filter_records(
+    pub async fn filter_by_params(
         self,
         params: RecordFilterParams,
     ) -> Result<Vec<RecordRead>, AppError> {
@@ -54,15 +54,11 @@ impl Service {
             .map(|entities| entities.into_iter().map(Into::into).collect())
     }
 
-    pub async fn delete_record(self, id: Uuid) -> Result<(), AppError> {
+    pub async fn delete_by_id(self, id: Uuid) -> Result<(), AppError> {
         self.repo.delete_by_id(id).await
     }
 
-    pub async fn delete_record_by_user(
-        self,
-        record_id: Uuid,
-        user_id: Uuid,
-    ) -> Result<(), AppError> {
+    pub async fn delete_owned(self, record_id: Uuid, user_id: Uuid) -> Result<(), AppError> {
         self.repo.delete_owned(record_id, user_id).await
     }
 }

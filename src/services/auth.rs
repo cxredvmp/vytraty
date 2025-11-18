@@ -29,10 +29,7 @@ impl Service {
         Self { user_repo }
     }
 
-    pub async fn sign_up_user(
-        &self,
-        user: model::UserSignUp,
-    ) -> Result<user_model::UserRead, AppError> {
+    pub async fn sign_up(&self, user: model::UserSignUp) -> Result<user_model::UserRead, AppError> {
         let user = user_entity::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set(user.name),
@@ -42,7 +39,7 @@ impl Service {
         self.user_repo.insert(user).await.map(Into::into)
     }
 
-    pub async fn sign_in_user(
+    pub async fn sign_in(
         &self,
         creds: model::UserSignIn,
     ) -> Result<user_model::UserRead, AppError> {

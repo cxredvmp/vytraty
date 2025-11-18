@@ -12,18 +12,18 @@ impl Service {
         Self { repo }
     }
 
-    pub async fn get_user(self, id: Uuid) -> Result<model::UserRead, AppError> {
+    pub async fn get_by_id(self, id: Uuid) -> Result<model::UserRead, AppError> {
         self.repo.find_by_id(id).await.map(Into::into)
     }
 
-    pub async fn get_users(self) -> Result<Vec<model::UserRead>, AppError> {
+    pub async fn get_all(self) -> Result<Vec<model::UserRead>, AppError> {
         self.repo
             .find_all()
             .await
             .map(|entities| entities.into_iter().map(Into::into).collect())
     }
 
-    pub async fn delete_user(self, id: Uuid) -> Result<(), AppError> {
+    pub async fn delete_by_id(self, id: Uuid) -> Result<(), AppError> {
         self.repo.delete_by_id(id).await
     }
 }

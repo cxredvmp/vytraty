@@ -19,7 +19,7 @@ async fn create_category(
     Json(CategoryBody { category }): Json<CategoryBody<CategoryCreate>>,
 ) -> Result<(StatusCode, Json<CategoryBody<CategoryRead>>), AppError> {
     category.validate()?;
-    let category = service.create_category(category).await?;
+    let category = service.create(category).await?;
     Ok((StatusCode::CREATED, Json(CategoryBody { category })))
 }
 
@@ -27,14 +27,14 @@ async fn get_category(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<CategoryBody<CategoryRead>>, AppError> {
-    let category = service.get_category(id).await?;
+    let category = service.get_by_id(id).await?;
     Ok(Json(CategoryBody { category }))
 }
 
 async fn get_categories(
     State(service): State<Service>,
 ) -> Result<Json<CategoriesBody<CategoryRead>>, AppError> {
-    let categories = service.get_categories().await?;
+    let categories = service.get_all().await?;
     Ok(Json(CategoriesBody { categories }))
 }
 
@@ -42,6 +42,6 @@ async fn delete_category(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
-    service.delete_category(id).await?;
+    service.delete_by_id(id).await?;
     Ok(StatusCode::NO_CONTENT)
 }

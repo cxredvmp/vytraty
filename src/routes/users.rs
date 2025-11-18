@@ -24,12 +24,12 @@ async fn get_user(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<Json<UserBody<UserRead>>, AppError> {
-    let user = service.get_user(id).await?;
+    let user = service.get_by_id(id).await?;
     Ok(Json(user.into()))
 }
 
 async fn get_users(State(service): State<Service>) -> Result<Json<UsersBody<UserRead>>, AppError> {
-    let users = service.get_users().await?;
+    let users = service.get_all().await?;
     Ok(Json(users.into()))
 }
 
@@ -37,7 +37,7 @@ async fn delete_user(
     State(service): State<Service>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
-    service.delete_user(id).await?;
+    service.delete_by_id(id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
 
@@ -45,6 +45,6 @@ async fn delete_me(
     State(service): State<Service>,
     Extension(user_auth): Extension<auth_model::UserAuth>,
 ) -> Result<StatusCode, AppError> {
-    service.delete_user(user_auth.id).await?;
+    service.delete_by_id(user_auth.id).await?;
     Ok(StatusCode::NO_CONTENT)
 }
