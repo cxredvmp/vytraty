@@ -20,6 +20,11 @@ impl UserSignUp {
 
         if self.default_currency_code.is_empty() {
             errors.push(("default_currency_code", "default_currency_code is empty"));
+        } else if self.default_currency_code.len() != 3 {
+            errors.push((
+                "default_currency_code",
+                "default_currency_code has invalid length",
+            ));
         }
 
         if self.password.is_empty() {
