@@ -1,7 +1,8 @@
 use axum::{
     extract::{FromRef, FromRequestParts},
-    http::{header, request::Parts},
+    http::request::Parts,
 };
+use axum_extra::headers::{Authorization, HeaderMapExt, authorization::Bearer};
 
 use crate::{config::Config, error::AppError, models::auth::*, utils::jwt};
 
@@ -22,14 +23,10 @@ where
 }
 
 fn token_from_parts(parts: &mut Parts) -> Result<String, AppError> {
-    let header = parts
+    Ok(parts
         .headers
-        .get(header::AUTHORIZATION)
+        .typed_get::<Authorization<Bearer>>()
         .ok_or(AppError::Unauthorized)?
-        .to_str()
-        .map_err(|e| AppError::Internal(format!("failed to convert header to string: {e}")))?;
-    let token = header
-        .strip_prefix("Bearer ")
-        .ok_or(AppError::Unauthorized)?;
-    Ok(token.to_string())
+        .token()
+        .to_string())
 }
