@@ -1,11 +1,11 @@
-# Backend Development: Lab 3
+# Backend Development: Lab 4
 
 ## Run
 
 ### Clone the repository:
 
 ```sh
-git clone --branch v3.0 https://github.com/vitaliichyhrynedu/backend_lab
+git clone --branch v4.0 https://github.com/vitaliichyhrynedu/backend_lab
 cd backend_lab
 ```
 
