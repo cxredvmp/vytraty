@@ -1,9 +1,9 @@
 use chrono::{Duration, Utc};
-use jsonwebtoken::*;
+use jsonwebtoken::{errors::ErrorKind, *};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::errors::AppError;
+use crate::errors::{AppError, AuthError};
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
@@ -33,6 +33,12 @@ pub fn verify(token: &str, secret: &str) -> Result<Claims, AppError> {
         &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::default(),
     )
-    .map_err(|_| AppError::Auth)
+    .map_err(|e| match e.kind() {
+        ErrorKind::InvalidToken | ErrorKind::InvalidSignature => {
+            AppError::Auth(AuthError::InvalidToken)
+        }
+        ErrorKind::ExpiredSignature => AppError::Auth(AuthError::ExpiredToken),
+        _ => AppError::Auth(AuthError::Unspecified),
+    })
     .map(|data| data.claims)
 }

@@ -4,7 +4,7 @@ use tokio::sync::OnceCell;
 use uuid::Uuid;
 
 use crate::{
-    errors::AppError,
+    errors::{AppError, AuthError},
     models::{auth as model, user as user_model},
     repositories::user::Repository as UserRepository,
     utils::password,
@@ -56,7 +56,7 @@ impl Service {
             .await
             .and_then(|_| match user {
                 Some(user) => Ok(user.into()),
-                None => Err(AppError::Auth),
+                None => Err(AppError::Auth(AuthError::InvalidPassword)),
             })
     }
 }

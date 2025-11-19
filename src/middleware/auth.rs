@@ -4,7 +4,12 @@ use axum::{
 };
 use axum_extra::headers::{Authorization, HeaderMapExt, authorization::Bearer};
 
-use crate::{config::Config, errors::AppError, models::auth::*, utils::jwt};
+use crate::{
+    config::Config,
+    errors::{AppError, AuthError},
+    models::auth::*,
+    utils::jwt,
+};
 
 impl<S> FromRequestParts<S> for UserAuth
 where
@@ -26,7 +31,7 @@ fn token_from_parts(parts: &mut Parts) -> Result<String, AppError> {
     Ok(parts
         .headers
         .typed_get::<Authorization<Bearer>>()
-        .ok_or(AppError::Auth)?
+        .ok_or(AppError::Auth(AuthError::MissingCredentials))?
         .token()
         .to_string())
 }

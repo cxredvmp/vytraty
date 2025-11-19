@@ -6,8 +6,11 @@ use axum::{
 use sea_orm::DbErr;
 use serde::Serialize;
 
+pub mod auth;
+pub use auth::Error as AuthError;
+
 pub enum AppError {
-    Auth,
+    Auth(AuthError),
     NotFound,
     Validation(Vec<ValidationError>),
     Internal(String),
@@ -30,7 +33,7 @@ pub struct ValidationError {
 impl From<&AppError> for StatusCode {
     fn from(value: &AppError) -> Self {
         match value {
-            AppError::Auth => Self::UNAUTHORIZED,
+            AppError::Auth(_) => Self::UNAUTHORIZED,
             AppError::NotFound => Self::NOT_FOUND,
             AppError::Validation { .. } => Self::UNPROCESSABLE_ENTITY,
             AppError::Internal(_) => Self::INTERNAL_SERVER_ERROR,
@@ -42,6 +45,10 @@ impl From<&AppError> for StatusCode {
 impl From<AppError> for ErrorBody {
     fn from(value: AppError) -> Self {
         match value {
+            AppError::Auth(e) => Self {
+                message: e.to_string(),
+                errors: None,
+            },
             AppError::Validation(es) => Self {
                 message: "validation failed".to_string(),
                 errors: Some(es),
