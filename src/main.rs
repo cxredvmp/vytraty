@@ -1,54 +1,31 @@
 use std::env;
 
-use axum::extract::FromRef;
-use migration::{Migrator, MigratorTrait};
-use sea_orm::Database;
-
-use crate::config::Config;
-
-mod config;
-mod errors;
-mod middleware;
-mod models;
-mod repositories;
-mod routes;
-mod services;
-mod utils;
-
-#[derive(Clone, FromRef)]
-struct AppState {
-    health_service: services::health::Service,
-    user_service: services::user::Service,
-    category_service: services::category::Service,
-    record_service: services::record::Service,
-    auth_service: services::auth::Service,
-    config: Config,
-}
+use vytraty::{AppState, config::Config, model, repository, route, service};
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
     let config = Config::from_env();
 
-    let db = Database::connect(config.db_url())
+    let db = toasty::Db::builder()
+        .models(model::models())
+        .connect(config.db_url())
         .await
         .expect("failed to connect to database");
     eprintln!("database connection established");
 
-    Migrator::up(&db, None)
-        .await
-        .expect("failed to apply pending migrations");
-    eprintln!("pending migrations applied");
+    db.push_schema().await.expect("failed to push schema");
+    eprintln!("schema pushed");
 
-    let user_repo = repositories::user::Repository::new(db.clone());
-    let category_repo = repositories::category::Repository::new(db.clone());
-    let record_repo = repositories::record::Repository::new(db.clone());
+    let user_repo = repository::User::new(db.clone());
+    let category_repo = repository::Category::new(db.clone());
+    let record_repo = repository::Record::new(db.clone());
 
-    let health_service = services::health::Service::new(db.clone());
-    let user_service = services::user::Service::new(user_repo.clone());
-    let category_service = services::category::Service::new(category_repo.clone());
-    let record_service = services::record::Service::new(record_repo.clone(), user_repo.clone());
-    let auth_service = services::auth::Service::new(user_repo.clone());
+    let health_service = service::Health::new(db.clone());
+    let user_service = service::User::new(user_repo.clone());
+    let category_service = service::Category::new(category_repo.clone());
+    let record_service = service::Record::new(record_repo.clone(), user_repo.clone());
+    let auth_service = service::Auth::new(user_repo.clone());
 
     let state = AppState {
         health_service,
@@ -58,7 +35,7 @@ async fn main() {
         auth_service,
         config,
     };
-    let router = routes::router(state.clone()).with_state(state);
+    let router = route::router(state.clone()).with_state(state);
 
     let port = env::var("PORT").expect("PORT must be set");
     let addr = format!("0.0.0.0:{port}");

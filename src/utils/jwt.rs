@@ -1,9 +1,9 @@
-use chrono::{Duration, Utc};
+use jiff::Timestamp;
 use jsonwebtoken::{errors::ErrorKind, *};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::errors::{AppError, AuthError};
+use crate::error::{AppError, AuthError, Result};
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
@@ -11,11 +11,13 @@ pub struct Claims {
     pub exp: usize,
 }
 
-pub fn sign(user_id: Uuid, secret: &str) -> Result<String, AppError> {
+pub fn sign(user_id: Uuid, secret: &str) -> Result<String> {
     let claims = Claims {
         sub: user_id,
-        exp: (Utc::now() + Duration::hours(1))
-            .timestamp()
+        exp: Timestamp::now()
+            .checked_add(jiff::Span::new().hours(1))
+            .unwrap()
+            .as_second()
             .try_into()
             .unwrap(),
     };
@@ -27,7 +29,7 @@ pub fn sign(user_id: Uuid, secret: &str) -> Result<String, AppError> {
     .map_err(|e| AppError::Internal(format!("failed to encode token: {e}")))
 }
 
-pub fn verify(token: &str, secret: &str) -> Result<Claims, AppError> {
+pub fn verify(token: &str, secret: &str) -> Result<Claims> {
     decode::<Claims>(
         token,
         &DecodingKey::from_secret(secret.as_bytes()),
