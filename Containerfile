@@ -1,17 +1,14 @@
 ARG APP_NAME=vytraty
 
 # Builder stage
-ARG RUST_VERSION=1.90.0
+ARG RUST_VERSION=1.95.0
 FROM rust:${RUST_VERSION}-slim AS builder
 
-# Leverage mounts to speed up the build process
 ARG APP_NAME
 WORKDIR /app
-RUN --mount=type=bind,source=src,target=src \
-    --mount=type=bind,source=entity,target=entity \
-    --mount=type=bind,source=migration,target=migration \
-    --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
-    --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
+
+# Leverage mounts to speed up the build process
+RUN --mount=type=bind,source=.,target=/app,rw \
     --mount=type=cache,target=/app/target/ \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     set -e; \

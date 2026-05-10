@@ -20,5 +20,5 @@ cp .env.example .env
 ### Run the application:
 
 ```sh
-docker compose up --build
+podman compose up --build
 ```
