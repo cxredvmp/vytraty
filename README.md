@@ -1,12 +1,14 @@
-# Backend Development: Lab 4
+# Vytraty
+
+Vytraty is a REST API for an expense tracker web application.
 
 ## Run
 
 ### Clone the repository:
 
 ```sh
-git clone --branch v4.0 https://github.com/vitaliichyhrynedu/backend_lab
-cd backend_lab
+git clone https://github.com/cxredvmp/vytraty
+cd vytraty
 ```
 
 ### Set environment variables:

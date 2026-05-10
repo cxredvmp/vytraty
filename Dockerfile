@@ -1,4 +1,4 @@
-ARG APP_NAME=backend_lab
+ARG APP_NAME=vytraty
 
 # Builder stage
 ARG RUST_VERSION=1.90.0
