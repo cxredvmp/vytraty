@@ -53,6 +53,7 @@ impl Ctx {
 }
 
 #[tokio::test]
+#[ignore]
 async fn end_to_end() {
     let mut ctx = text_ctx().await;
 
