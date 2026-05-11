@@ -3,9 +3,6 @@ name = "vytraty"
 version = "0.5.0"
 edition = "2024"
 
-[[bin]]
-name = "cli"
-
 [dependencies]
 axum = { version = "0.8.6", features = ["macros"] }
 jiff = { version = "0.2", features = ["serde"] }
@@ -18,4 +15,3 @@ argon2 = "0.5.3"
 jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
 axum-extra = { version = "0.12.2", features = ["typed-header"] }
 toasty = { version = "0.5.0", features = ["rust_decimal", "postgresql", "jiff"] }
-toasty-cli = "0.5.0"
