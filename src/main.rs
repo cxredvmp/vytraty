@@ -1,4 +1,4 @@
-use vytraty::{AppState, config::Config, db, route};
+use vytraty::{AppState, config::Config, db::db, route};
 
 #[tokio::main]
 async fn main() {

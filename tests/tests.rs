@@ -24,7 +24,7 @@ impl Ctx {
         let host_port = db_node.get_host_port_ipv4(5432).await.unwrap();
 
         let db_url = format!("postgres://postgres:postgres@{host}:{host_port}/postgres",);
-        let db = db(&db_url).await;
+        let db = db::db(&db_url).await;
 
         let config = Config::new(
             db_url.clone(),

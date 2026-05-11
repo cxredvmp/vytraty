@@ -1,4 +1,5 @@
 pub mod config;
+pub mod db;
 pub mod error;
 pub mod middleware;
 pub mod model;
@@ -11,20 +12,6 @@ use axum::extract::FromRef;
 use toasty::Db;
 
 pub use crate::config::Config;
-
-pub async fn db(db_url: &str) -> Db {
-    let db = toasty::Db::builder()
-        .models(model::models())
-        .connect(db_url)
-        .await
-        .expect("failed to connect to database");
-    eprintln!("database connection established");
-
-    db.push_schema().await.expect("failed to push schema");
-    eprintln!("schema pushed");
-
-    db
-}
 
 #[derive(Clone, FromRef)]
 pub struct AppState {
