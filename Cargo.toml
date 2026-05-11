@@ -15,3 +15,7 @@ argon2 = "0.5.3"
 jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
 axum-extra = { version = "0.12.2", features = ["typed-header"] }
 toasty = { version = "0.5.0", features = ["rust_decimal", "postgresql", "jiff"] }
+
+[dev-dependencies]
+reqwest = { version = "0.13.3", features = ["json"] }
+testcontainers-modules = { version = "0.15.0", features = ["blocking", "postgres"] }
