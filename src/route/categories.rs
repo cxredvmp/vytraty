@@ -17,9 +17,7 @@ pub fn router() -> Router<AppState> {
 async fn create(
     State(mut service): State<service::Category>,
     Extension(user_auth): Extension<model::auth::Auth>,
-    Json(model::category::Body { category }): Json<
-        model::category::Body<model::category::CreateRequest>,
-    >,
+    Json(category): Json<model::category::CreateRequest>,
 ) -> Result<(
     StatusCode,
     Json<model::category::Body<model::category::Read>>,

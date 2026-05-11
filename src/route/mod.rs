@@ -1,27 +1,28 @@
 mod auth;
 mod categories;
 mod health;
+mod me;
 mod records;
-mod users;
 
-use axum::{Router, middleware, routing::get};
+use axum::{Router, http::StatusCode, middleware, routing::get};
 
 use crate::{AppState, model};
 
 pub fn router(state: AppState) -> Router<AppState> {
     let health = health::router();
-    let users = users::router();
+    let me = me::router();
     let categories = categories::router();
     let records = records::router();
     let auth = auth::router();
 
     let public = Router::new()
         .route("/", get(get_root))
-        .nest("/auth", auth)
-        .nest("/health", health);
+        .merge(auth)
+        .merge(health)
+        .with_state(state.clone());
 
     let protected = Router::new()
-        .nest("/users", users)
+        .merge(me)
         .nest("/categories", categories)
         .nest("/records", records)
         .layer(middleware::from_extractor_with_state::<
@@ -29,7 +30,10 @@ pub fn router(state: AppState) -> Router<AppState> {
             AppState,
         >(state.clone()));
 
-    Router::new().merge(public).merge(protected)
+    Router::new()
+        .merge(public)
+        .merge(protected)
+        .fallback(|| async { StatusCode::NOT_FOUND })
 }
 
 async fn get_root() -> &'static str {

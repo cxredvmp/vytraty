@@ -4,7 +4,7 @@ use jiff::Timestamp;
 use crate::{AppState, model, service};
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/", get(check))
+    Router::new().route("/health", get(check))
 }
 
 async fn check(State(mut service): State<service::Health>) -> model::health::Health {

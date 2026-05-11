@@ -17,10 +17,10 @@ pub fn router() -> Router<AppState> {
 async fn create(
     State(mut service): State<service::Record>,
     Extension(user_auth): Extension<model::auth::Auth>,
-    Json(body): Json<model::record::Body<model::record::CreateRequest>>,
+    Json(record): Json<model::record::CreateRequest>,
 ) -> Result<(StatusCode, Json<model::record::Body<model::record::Read>>)> {
-    body.record.validate()?;
-    let record = service.create_for(body.record, user_auth.id).await?;
+    record.validate()?;
+    let record = service.create_for(record, user_auth.id).await?;
     Ok((StatusCode::CREATED, Json(model::record::Body { record })))
 }
 

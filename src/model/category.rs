@@ -29,7 +29,7 @@ pub struct BodyArray<T> {
     pub categories: Vec<T>,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Read {
     pub id: Uuid,
     pub name: String,
@@ -56,7 +56,7 @@ impl From<Vec<Read>> for BodyArray<Read> {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct CreateRequest {
     pub name: String,
 }

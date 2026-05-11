@@ -4,11 +4,11 @@ use crate::{AppState, error::Result, model, service, utils::jwt};
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .route("/signup", post(sign_up))
-        .route("/signin", post(sign_in))
+        .route("/signup", post(signup))
+        .route("/signin", post(signin))
 }
 
-async fn sign_up(
+async fn signup(
     State(mut service): State<service::Auth>,
     Json(user): Json<model::auth::SignUp>,
 ) -> Result<(StatusCode, Json<model::user::Body<model::user::Read>>)> {
@@ -19,7 +19,7 @@ async fn sign_up(
     ))
 }
 
-async fn sign_in(
+async fn signin(
     State(mut state): State<AppState>,
     Json(creds): Json<model::auth::SignIn>,
 ) -> Result<Json<model::auth::Token>> {

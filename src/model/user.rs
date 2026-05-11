@@ -29,11 +29,11 @@ pub struct BodyArray<T> {
     pub users: Vec<T>,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Read {
     pub id: Uuid,
     pub name: String,
-    pub currency: String,
+    pub default_currency_code: String,
 }
 
 impl From<User> for Read {
@@ -41,7 +41,7 @@ impl From<User> for Read {
         Self {
             id: user.id,
             name: user.name,
-            currency: user.default_currency_code,
+            default_currency_code: user.default_currency_code,
         }
     }
 }
