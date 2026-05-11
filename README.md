@@ -20,5 +20,6 @@ cp .env.example .env
 ### Run the application:
 
 ```sh
-podman compose up --build
+podman build --security-opt label=disable -t vytraty .
+podman compose up
 ```
