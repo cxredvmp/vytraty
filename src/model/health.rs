@@ -4,9 +4,9 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use jiff::Timestamp;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Health {
     pub status: Status,
     pub observed_at: Timestamp,
@@ -24,14 +24,14 @@ impl IntoResponse for Health {
     }
 }
 
-#[derive(Serialize, PartialEq, Eq, Clone, Copy)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Copy)]
 #[serde(rename_all = "lowercase")]
 pub enum Status {
     Up,
     Down,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Services {
     pub db: Status,
 }

@@ -55,3 +55,23 @@ impl Ctx {
 async fn test_ctx() {
     let _ctx = Ctx::new().await;
 }
+
+#[tokio::test]
+async fn test_health() {
+    use vytraty::model::health::{Health, Status};
+
+    let ctx = Ctx::new().await;
+
+    let response = ctx
+        .client
+        .get(format!("{}/health", ctx.url))
+        .send()
+        .await
+        .unwrap();
+
+    assert!(response.status().is_success());
+
+    let health = response.json::<Health>().await.unwrap();
+
+    assert!(matches!(health.status, Status::Up));
+}
