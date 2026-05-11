@@ -29,3 +29,7 @@ podman compose up
 ```sh
 cargo test
 ```
+
+### OpenAPI documentation
+
+Swagger is accessible at `http://localhost:8080/swagger-ui/`.

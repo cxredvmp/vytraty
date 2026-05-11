@@ -14,6 +14,14 @@ pub fn router() -> Router<AppState> {
         .route("/{id}", get(get_by_id).delete(delete_by_id))
 }
 
+#[utoipa::path(
+    operation_id = "categories_create",
+    post,
+    path = "/categories",
+    security(("bearerAuth" = [])),
+    request_body = model::category::CreateRequest,
+    responses((status = 201, description = "Created category", body = model::category::Body<model::category::Read>))
+)]
 async fn create(
     State(mut service): State<service::Category>,
     Extension(user_auth): Extension<model::auth::Auth>,
@@ -38,6 +46,13 @@ async fn get_by_id(
     Ok(Json(service.get_by_id_for(id, user_auth.id).await?.into()))
 }
 
+#[utoipa::path(
+    operation_id = "categories_get_all",
+    get,
+    path = "/categories",
+    security(("bearerAuth" = [])),
+    responses((status = 200, description = "Listed available categories", body = model::category::BodyArray<model::category::Read>))
+)]
 async fn get_all(
     State(mut service): State<service::Category>,
     Extension(user_auth): Extension<model::auth::Auth>,
@@ -45,6 +60,13 @@ async fn get_all(
     Ok(Json(service.get_all_for(user_auth.id).await?.into()))
 }
 
+#[utoipa::path(
+    operation_id = "categories_delete_by_id",
+    delete,
+    path = "/categories",
+    security(("bearerAuth" = [])),
+    responses((status = 204, description = "Deleted category"))
+)]
 async fn delete_by_id(
     State(mut service): State<service::Category>,
     Path(id): Path<Uuid>,

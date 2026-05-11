@@ -1,10 +1,15 @@
-use vytraty::{AppState, config::Config, db::db, route};
+use vytraty::{AppState, config::Config, db, route};
 
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
     let config = Config::from_env();
-    let db = db(config.db_url()).await;
+
+    let mut db = db::connect_db(config.db_url()).await;
+    if config.setup_db() {
+        db::setup_db(&mut db).await;
+    }
+
     let state = AppState::new(config.clone(), db);
     let router = route::router(state.clone()).with_state(state);
 

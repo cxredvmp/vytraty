@@ -8,6 +8,14 @@ pub fn router() -> Router<AppState> {
         .route("/signin", post(signin))
 }
 
+#[utoipa::path(
+    post,
+    path = "/signup",
+    request_body = model::auth::SignUp,
+    responses(
+        (status = 201, description = "Signed up", body = model::user::Body<model::user::Read>)
+    )
+)]
 async fn signup(
     State(mut service): State<service::Auth>,
     Json(user): Json<model::auth::SignUp>,
@@ -19,6 +27,14 @@ async fn signup(
     ))
 }
 
+#[utoipa::path(
+    post,
+    path = "/signin",
+    request_body = model::auth::SignIn,
+    responses(
+        (status = 200, description = "Signed in", body = model::auth::Token)
+    )
+)]
 async fn signin(
     State(mut state): State<AppState>,
     Json(creds): Json<model::auth::SignIn>,

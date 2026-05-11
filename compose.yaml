@@ -8,6 +8,7 @@ services:
       PORT: ${PORT}
       DATABASE_URL: ${DATABASE_DOCKER_URL}
       JWT_SECRET: ${JWT_SECRET}
+      SETUP_DB: ${SETUP_DB}
     depends_on:
         postgres:
           condition: service_healthy

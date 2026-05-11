@@ -6,6 +6,12 @@ pub fn router() -> Router<AppState> {
     Router::new().route("/me", get(get_me).delete(delete_me))
 }
 
+#[utoipa::path(
+    get,
+    path = "/me",
+    security(("bearerAuth" = [])),
+    responses((status = 200, description = "Current user profile", body = model::user::Body<model::user::Read>))
+)]
 async fn get_me(
     State(mut service): State<service::User>,
     Extension(user_auth): Extension<model::auth::Auth>,
@@ -14,6 +20,12 @@ async fn get_me(
     Ok(Json(user.into()))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/me",
+    security(("bearerAuth" = [])),
+    responses((status = 204, description = "Deleted current user"))
+)]
 async fn delete_me(
     State(mut service): State<service::User>,
     Extension(user_auth): Extension<model::auth::Auth>,

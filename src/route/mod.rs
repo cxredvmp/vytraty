@@ -1,5 +1,6 @@
 mod auth;
 mod categories;
+mod doc;
 mod health;
 mod me;
 mod records;
@@ -14,11 +15,13 @@ pub fn router(state: AppState) -> Router<AppState> {
     let categories = categories::router();
     let records = records::router();
     let auth = auth::router();
+    let doc = doc::router();
 
     let public = Router::new()
         .route("/", get(get_root))
         .merge(auth)
         .merge(health)
+        .merge(doc)
         .with_state(state.clone());
 
     let protected = Router::new()

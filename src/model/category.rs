@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use toasty::BelongsTo;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::{
@@ -20,16 +21,19 @@ pub struct Category {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Body<T> {
     pub category: T,
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct BodyArray<T> {
     pub categories: Vec<T>,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Read {
     pub id: Uuid,
     pub name: String,
@@ -57,6 +61,7 @@ impl From<Vec<Read>> for BodyArray<Read> {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct CreateRequest {
     pub name: String,
 }

@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::error::{AppError, Result};
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct SignUp {
     pub name: String,
     pub default_currency_code: String,
@@ -37,6 +39,7 @@ impl SignUp {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct SignIn {
     pub name: String,
     pub password: String,
@@ -63,6 +66,7 @@ impl SignIn {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Token {
     pub token: String,
     pub schema: String,

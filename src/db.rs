@@ -3,21 +3,28 @@ use uuid::Uuid;
 
 use crate::model::{self, category::Category, currency::Currency};
 
-pub async fn db(db_url: &str) -> Db {
-    let mut db = toasty::Db::builder()
+pub async fn connect_db(db_url: &str) -> Db {
+    let db = toasty::Db::builder()
         .models(model::models())
         .connect(db_url)
         .await
         .expect("failed to connect to database");
     eprintln!("database connection established");
 
+    db
+}
+
+pub async fn setup_db(db: &mut Db) {
     db.push_schema().await.expect("failed to push schema");
     eprintln!("schema pushed");
 
-    seed(&mut db).await;
+    seed(db).await;
     eprintln!("seeded database");
+}
 
-    db
+async fn seed(db: &mut Db) {
+    seed_currencies(db).await;
+    seed_categories(db).await;
 }
 
 async fn seed_currencies(db: &mut Db) {
@@ -77,9 +84,4 @@ async fn seed_categories(db: &mut Db) {
             eprintln!("seeded default category: {}", name);
         }
     }
-}
-
-async fn seed(db: &mut Db) {
-    seed_currencies(db).await;
-    seed_categories(db).await;
 }

@@ -25,10 +25,12 @@ impl Ctx {
         let host_port = db_node.get_host_port_ipv4(5432).await.unwrap();
 
         let db_url = format!("postgres://postgres:postgres@{host}:{host_port}/postgres",);
-        let db = db::db(&db_url).await;
+        let mut db = db::connect_db(&db_url).await;
+        db::setup_db(&mut db).await;
 
         let config = Config::new(
             db_url.clone(),
+            "false".to_string(),
             "0".to_string(),
             "test_jwt_secret".to_string(),
         );

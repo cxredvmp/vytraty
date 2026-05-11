@@ -5,8 +5,10 @@ use axum::{
 };
 use jiff::Timestamp;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Health {
     pub status: Status,
     pub observed_at: Timestamp,
@@ -24,7 +26,9 @@ impl IntoResponse for Health {
     }
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum Status {
     Up,
@@ -32,6 +36,7 @@ pub enum Status {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Services {
     pub db: Status,
 }

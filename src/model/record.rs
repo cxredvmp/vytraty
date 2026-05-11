@@ -2,6 +2,7 @@ use jiff::Timestamp;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use toasty::BelongsTo;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::{
@@ -31,16 +32,19 @@ pub struct Record {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Body<T> {
     pub record: T,
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct BodyArray<T> {
     pub records: Vec<T>,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Read {
     pub id: Uuid,
     pub user_id: Uuid,
@@ -76,6 +80,7 @@ impl From<Vec<Read>> for BodyArray<Read> {
 }
 
 #[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct CreateRequest {
     pub category_id: Uuid,
     pub sum: Decimal,
@@ -115,7 +120,8 @@ pub struct Create {
     pub currency_code: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
+#[derive(ToSchema)]
 pub struct Filters {
     pub category_id: Option<Uuid>,
 }

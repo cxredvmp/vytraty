@@ -11,9 +11,17 @@ use crate::{AppState, error::Result, model, service};
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", post(create).get(get_all))
-        .route("/{id}", get(get_by_id).delete(delete))
+        .route("/{id}", get(get_by_id).delete(delete_by_id))
 }
 
+#[utoipa::path(
+    operation_id = "records_create",
+    post,
+    path = "/records",
+    security(("bearerAuth" = [])),
+    request_body = model::record::CreateRequest,
+    responses((status = 201, description = "Created record", body = model::record::Body<model::record::Read>))
+)]
 async fn create(
     State(mut service): State<service::Record>,
     Extension(user_auth): Extension<model::auth::Auth>,
@@ -33,6 +41,13 @@ async fn get_by_id(
     Ok(Json(model::record::Body { record }))
 }
 
+#[utoipa::path(
+    operation_id = "records_get_all",
+    get,
+    path = "/records",
+    security(("bearerAuth" = [])),
+    responses((status = 200, description = "Listed records", body = model::record::BodyArray<model::record::Read>))
+)]
 async fn get_all(
     State(mut service): State<service::Record>,
     Extension(user_auth): Extension<model::auth::Auth>,
@@ -43,7 +58,14 @@ async fn get_all(
     Ok(Json(model::record::BodyArray { records }))
 }
 
-async fn delete(
+#[utoipa::path(
+    operation_id = "records_delete_by_id",
+    delete,
+    path = "/records",
+    security(("bearerAuth" = [])),
+    responses((status = 204, description = "Deleted record"))
+)]
+async fn delete_by_id(
     State(mut service): State<service::Record>,
     Extension(user_auth): Extension<model::auth::Auth>,
     Path(record_id): Path<Uuid>,
