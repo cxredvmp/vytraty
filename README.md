@@ -2,24 +2,30 @@
 
 Vytraty is a REST API for an expense tracker web application.
 
-## Run
+## Guide
 
-### Clone the repository:
+### Clone the repository
 
 ```sh
 git clone https://github.com/cxredvmp/vytraty
 cd vytraty
 ```
 
-### Set environment variables:
+### Set environment variables
 
 ```sh
 cp .env.example .env
 ```
 
-### Run the application:
+### Build and run
 
 ```sh
 podman build --security-opt label=disable -t vytraty .
 podman compose up
+```
+
+### Test
+
+```sh
+cargo test
 ```
